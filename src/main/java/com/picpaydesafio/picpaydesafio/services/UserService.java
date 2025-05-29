@@ -2,30 +2,36 @@ package com.picpaydesafio.picpaydesafio.services;
 
 import com.picpaydesafio.picpaydesafio.domain.user.User;
 import com.picpaydesafio.picpaydesafio.domain.user.UserType;
-import com.picpaydesafio.picpaydesafio.dtos.user.UserDTO;
+import com.picpaydesafio.picpaydesafio.dtos.user.UserCreateDTO;
+import com.picpaydesafio.picpaydesafio.dtos.user.UserUpdateDTO;
 import com.picpaydesafio.picpaydesafio.repositories.UserRepository;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository repository;
 
-    public void saveUser(User user){
+    public void saveUser(User user) {
         this.repository.save(user);
     }
 
-    public User createUser(UserDTO data){
+    public User createUser(UserCreateDTO data) {
         User newUser = new User(data);
         this.saveUser(newUser);
         return newUser;
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return this.repository.findAll();
     }
 
@@ -41,6 +47,45 @@ public class UserService {
         if (sender.getBalance().compareTo(amount) < 0) {
             throw new Exception("User does not have enough balance");
         }
+    }
+
+    public User updateUser(Long id, UserUpdateDTO newUserData) throws Exception {
+        Optional<User> optionalUser = this.repository.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            throw new Exception("User not found");
+        }
+
+        User user = optionalUser.get();
+
+        BeanWrapper src = new BeanWrapperImpl(newUserData);
+        BeanWrapper target = new BeanWrapperImpl(user);
+
+        Arrays.stream(UserUpdateDTO.class.getDeclaredFields())
+                .map(Field::getName)
+                .filter(propertyName -> src.getPropertyValue(propertyName) != null)
+                .forEach(propertyName -> {
+                        Object value = src.getPropertyValue(propertyName);
+                    if (propertyName.equals("userType")) {
+                        UserType userType = UserType.valueOf(Objects.requireNonNull(value).toString().toUpperCase());
+                        target.setPropertyValue(propertyName, userType);
+                    } else {
+                        target.setPropertyValue(propertyName, value);
+                    }
+                });
+
+        return this.repository.save(user);
+    }
+
+    public User deleteUser(Long id) throws Exception {
+        Optional<User> optionalUser = this.repository.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            throw new Exception("User not found");
+        }
+        User user = optionalUser.get();
+        this.repository.deleteById(id);
+        return user;
     }
 
 }
