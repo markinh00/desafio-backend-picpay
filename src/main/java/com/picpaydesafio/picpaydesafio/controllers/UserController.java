@@ -47,7 +47,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserReadDTO> getUserById(@PathVariable Long id) throws Exception {
         User user = this.service.findUserById(id);
-        return  new ResponseEntity<>(UserReadDTO.fromEntity(user), HttpStatus.OK);
+        return new ResponseEntity<>(UserReadDTO.fromEntity(user), HttpStatus.OK);
     }
 
     @Operation(

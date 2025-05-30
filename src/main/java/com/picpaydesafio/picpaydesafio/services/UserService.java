@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -65,13 +64,8 @@ public class UserService {
                 .map(Field::getName)
                 .filter(propertyName -> src.getPropertyValue(propertyName) != null)
                 .forEach(propertyName -> {
-                        Object value = src.getPropertyValue(propertyName);
-                    if (propertyName.equals("userType")) {
-                        UserType userType = UserType.valueOf(Objects.requireNonNull(value).toString().toUpperCase());
-                        target.setPropertyValue(propertyName, userType);
-                    } else {
-                        target.setPropertyValue(propertyName, value);
-                    }
+                    Object value = src.getPropertyValue(propertyName);
+                    target.setPropertyValue(propertyName, value);
                 });
 
         return this.repository.save(user);

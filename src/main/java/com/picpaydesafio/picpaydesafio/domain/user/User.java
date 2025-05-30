@@ -34,6 +34,6 @@ public class User {
         this.password = data.password();
         this.document = data.document();
         this.balance = data.balance();
-        this.userType = UserType.valueOf(data.userType().toUpperCase());
+        this.userType = data.userType();
     }
 }
