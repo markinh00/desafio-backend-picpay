@@ -66,6 +66,7 @@ public class UserService {
         if (sender.getBalance().compareTo(amount) < 0) {
             throw new Exception("User does not have enough balance");
         }
+
     }
 
     public User updateUser(Long id, UserUpdateDTO newUserData) throws Exception {

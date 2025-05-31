@@ -7,6 +7,7 @@ import com.picpaydesafio.picpaydesafio.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -21,6 +22,10 @@ public class TransactionService {
 
     @Autowired
     private TransactionAuthService transactionAuthService;
+
+    private void saveTransaction(Transaction transaction){
+        this.repository.save(transaction);
+    }
 
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
@@ -43,7 +48,7 @@ public class TransactionService {
         sender.setBalance(sender.getBalance().subtract(transaction.value()));
         receiver.setBalance(receiver.getBalance().add(transaction.value()));
 
-        this.repository.save(newTransaction);
+        this.saveTransaction(newTransaction);
         this.userService.saveUser(receiver);
         this.userService.saveUser(sender);
 
@@ -51,5 +56,9 @@ public class TransactionService {
         this.notificationService.sendNotification(receiver, "Transaction received");
 
         return newTransaction;
+    }
+
+    public List<Transaction> findAllTransactions(){
+        return this.repository.findAll();
     }
 }
