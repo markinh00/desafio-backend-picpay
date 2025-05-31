@@ -10,6 +10,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class UserService {
     private UserRepository repository;
 
     private boolean isEmailValid(User user) {
-        Optional<User> foundUser = this.repository.findUserByEmail(user.getEmail());
+        Optional<User> foundUser = this.repository.findByEmail(user.getEmail());
         if (foundUser.isPresent() && foundUser.get().getId() != user.getId()) {
             throw new DataIntegrityViolationException("Document already in use");
         }
@@ -30,15 +31,15 @@ public class UserService {
     }
 
     private boolean isDocumentValid(User user) {
-        Optional<User> foundUser = this.repository.findUserByDocument(user.getDocument());
+        Optional<User> foundUser = this.repository.findByDocument(user.getDocument());
         if (foundUser.isPresent() && foundUser.get().getId() != user.getId()) {
-            throw new DataIntegrityViolationException("Document already in use");
+            throw new DataIntegrityViolationException("Email already in use");
         }
         return true;
     }
 
     public void saveUser(User user) {
-        if (isDocumentValid(user) && isEmailValid(user)) {
+        if (isDocumentValid(user) || !isEmailValid(user)) {
             this.repository.save(user);
         }
     }
