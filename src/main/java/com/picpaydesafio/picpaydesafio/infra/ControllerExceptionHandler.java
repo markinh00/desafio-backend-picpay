@@ -18,7 +18,7 @@ import java.util.Map;
 public class ControllerExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> treatDuplicationException(DataIntegrityViolationException exception) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO("User already registered", "409");
+        ExceptionDTO exceptionDTO = new ExceptionDTO(exception.getMessage(), "409");
         return ResponseEntity.badRequest().body(exceptionDTO);
     }
 

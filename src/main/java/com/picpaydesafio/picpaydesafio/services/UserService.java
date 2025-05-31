@@ -8,6 +8,7 @@ import com.picpaydesafio.picpaydesafio.repositories.UserRepository;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -20,8 +21,26 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    private boolean isEmailValid(User user) {
+        Optional<User> foundUser = this.repository.findUserByEmail(user.getEmail());
+        if (foundUser.isPresent() && foundUser.get().getId() != user.getId()) {
+            throw new DataIntegrityViolationException("Document already in use");
+        }
+        return true;
+    }
+
+    private boolean isDocumentValid(User user) {
+        Optional<User> foundUser = this.repository.findUserByDocument(user.getDocument());
+        if (foundUser.isPresent() && foundUser.get().getId() != user.getId()) {
+            throw new DataIntegrityViolationException("Document already in use");
+        }
+        return true;
+    }
+
     public void saveUser(User user) {
-        this.repository.save(user);
+        if (isDocumentValid(user) && isEmailValid(user)) {
+            this.repository.save(user);
+        }
     }
 
     public User createUser(UserCreateDTO data) {
@@ -68,7 +87,9 @@ public class UserService {
                     target.setPropertyValue(propertyName, value);
                 });
 
-        return this.repository.save(user);
+        this.saveUser(user);
+
+        return user;
     }
 
     public User deleteUser(Long id) throws Exception {
