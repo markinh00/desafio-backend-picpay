@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserServiceUnitTest {
+class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
