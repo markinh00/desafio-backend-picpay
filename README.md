@@ -33,7 +33,7 @@ This is a backend project developed in Java as a solution to PicPay's technical 
 ```
 #### 4. Access swagger at:
 ```
-  http://localhost:8080/swagger-ui.html
+  http://localhost:8080/swagger-ui/index.html
 ```
 ### 🐳 Running with Docker Compose
 #### 1. Clone the repository
@@ -47,5 +47,5 @@ This is a backend project developed in Java as a solution to PicPay's technical 
 ```
 #### 3. Access swagger at:
 ```
-  http://localhost:8080/swagger-ui.html
+  http://localhost:8080/swagger-ui/index.html
 ```
