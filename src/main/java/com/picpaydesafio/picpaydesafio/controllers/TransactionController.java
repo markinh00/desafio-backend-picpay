@@ -23,13 +23,16 @@ public class TransactionController {
             summary = "Create a transaction",
             description = "Performs a financial transaction between users. Returns the created transaction details."
     )
-
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO transaction) throws Exception {
         Transaction newTransaction = this.service.createTransaction(transaction);
         return new ResponseEntity<>(newTransaction, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Get all transactions",
+            description = "Returns the created transactions."
+    )
     @GetMapping
     public ResponseEntity<List<Transaction>> getTransactions(){
         return new ResponseEntity<>(this.service.findAllTransactions(), HttpStatus.OK);
